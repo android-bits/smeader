@@ -6,6 +6,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -13,10 +14,19 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    val messageList = ArrayList<String>()
+
+    lateinit var arrayAdapter: ArrayAdapter<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, messageList)
+        list.adapter = arrayAdapter
+
+        requestSmsPermission()
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -66,6 +76,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun readSms(senderId: String) {
+
 
     }
 
