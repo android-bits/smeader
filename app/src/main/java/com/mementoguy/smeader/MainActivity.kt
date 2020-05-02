@@ -20,8 +20,10 @@ class MainActivity : AppCompatActivity() {
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+                .setAction("Action", null).show()
         }
+
+        mainActivityInstance= this
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -41,17 +43,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun requestSmsPermission() {
-        if (ContextCompat.checkSelfPermission(baseContext, "android.permission.READ_SMS") == PackageManager.PERMISSION_GRANTED)
-        readSms("MPESA")
-
+        if (ContextCompat.checkSelfPermission(
+                baseContext,
+                "android.permission.READ_SMS"
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+            readSms("MPESA")
         else {
 
             val REQUEST_CODE_READ_SMS = 123
-            ActivityCompat.requestPermissions(this, arrayOf("android.permission.READ_SMS"), REQUEST_CODE_READ_SMS)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf("android.permission.READ_SMS"),
+                REQUEST_CODE_READ_SMS
+            )
         }
     }
 
-    private fun readSms(senderId : String) {
+    private fun readSms(senderId: String) {
 
+    }
+
+
+    companion object {
+       lateinit var mainActivityInstance : MainActivity
     }
 }
