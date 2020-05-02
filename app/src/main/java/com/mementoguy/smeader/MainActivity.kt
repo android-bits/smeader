@@ -1,10 +1,13 @@
 package com.mementoguy.smeader
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -35,5 +38,20 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun requestSmsPermission() {
+        if (ContextCompat.checkSelfPermission(baseContext, "android.permission.READ_SMS") == PackageManager.PERMISSION_GRANTED)
+        readSms("MPESA")
+
+        else {
+
+            val REQUEST_CODE_READ_SMS = 123
+            ActivityCompat.requestPermissions(this, arrayOf("android.permission.READ_SMS"), REQUEST_CODE_READ_SMS)
+        }
+    }
+
+    private fun readSms(senderId : String) {
+
     }
 }
