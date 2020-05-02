@@ -23,6 +23,11 @@ class MainActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         mainActivityInstance= this
     }
 
