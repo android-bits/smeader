@@ -4,8 +4,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Telephony
-import android.telephony.SmsMessage
-import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -115,17 +113,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun filterMpesaSuccessSms(smsBody: String): String {
-        var smsMpesaSuccess = ""
-        val indexSearchEnd = smsBody.indexOfFirst {
-            it.equals('.')
-        }
+//        each successfull transaction has 'Confirmed' keyword before the first fullstop `.`
+        val smsFirstLineSubstring = smsBody.split(".").first()
+        var smsMpesaSuccess  = ""
 
-        try {
-            if (smsBody.substring(0, indexSearchEnd).contains("Confirmed"))
+        if (smsFirstLineSubstring.contains("Confirmed"))
                 smsMpesaSuccess = smsBody
-        } catch (e: StringIndexOutOfBoundsException) {
-
-        }
 
         return smsMpesaSuccess
     }
