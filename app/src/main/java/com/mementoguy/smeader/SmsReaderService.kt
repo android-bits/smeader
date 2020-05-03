@@ -36,7 +36,7 @@ class SmsReaderService : BroadcastReceiver() {
             Toast.makeText(context, smsString, Toast.LENGTH_SHORT).show()
 
             val mainActivityInstance = MainActivity.mainActivityInstance
-//            mainActivityInstance.updateList(smsString)
+            mainActivityInstance.updateList(smsString)
 
         }
     }

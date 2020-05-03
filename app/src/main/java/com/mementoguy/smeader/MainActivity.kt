@@ -1,7 +1,9 @@
 package com.mementoguy.smeader
 
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.telephony.SmsMessage
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -77,8 +79,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun readSms(senderId: String) {
 
+        val contentResolver = getContentResolver()
+        val smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null)
+        val indexBody = smsInboxCursor?.getColumnIndex("body")
+        val indexAddress = smsInboxCursor?.getColumnIndex("address")
 
+        if (indexBody!! < 0 || !smsInboxCursor?.moveToFirst()) return
+        arrayAdapter.clear()
+        do {
+            val str= "SMS From : ${smsInboxCursor.getString(indexAddress!!)} ${smsInboxCursor.getString(indexBody)}"
+            arrayAdapter.add(str)
+        }while (smsInboxCursor.moveToNext())
     }
+
+    fun updateList(smsMessage: String) {
+        arrayAdapter.insert(smsMessage, 0)
+        arrayAdapter.notifyDataSetChanged()
+    }
+
+
 
 
     companion object {
