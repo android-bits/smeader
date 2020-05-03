@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Telephony
 import android.telephony.SmsMessage
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -101,7 +102,9 @@ class MainActivity : AppCompatActivity() {
         arrayAdapter.clear()
 
         do {
-            arrayAdapter.add(smsInboxCursor.getString(indexBody!!))
+            val smsMpesaSuccess = filterMpesaSuccessSms(smsInboxCursor.getString(indexBody!!))
+            if (smsMpesaSuccess.isNotBlank())
+                arrayAdapter.add(smsMpesaSuccess)
 
         } while (smsInboxCursor.moveToNext())
     }
@@ -109,6 +112,22 @@ class MainActivity : AppCompatActivity() {
     fun updateList(smsMessage: String) {
         arrayAdapter.insert(smsMessage, 0)
         arrayAdapter.notifyDataSetChanged()
+    }
+
+    fun filterMpesaSuccessSms(smsBody: String): String {
+        var smsMpesaSuccess = ""
+        val indexSearchEnd = smsBody.indexOfFirst {
+            it.equals('.')
+        }
+
+        try {
+            if (smsBody.substring(0, indexSearchEnd).contains("Confirmed"))
+                smsMpesaSuccess = smsBody
+        } catch (e: StringIndexOutOfBoundsException) {
+
+        }
+
+        return smsMpesaSuccess
     }
 
 
