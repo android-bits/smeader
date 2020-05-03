@@ -3,6 +3,7 @@ package com.mementoguy.smeader
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Telephony
 import android.telephony.SmsMessage
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        mainActivityInstance= this
+        mainActivityInstance = this
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -78,18 +79,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun readSms(senderId: String) {
+//        columns of interest
+        val smsColumns =
+            arrayOf(Telephony.TextBasedSmsColumns.BODY, Telephony.TextBasedSmsColumns.ADDRESS)
+//        query selection criteria
+        val smsSelection = "${Telephony.TextBasedSmsColumns.ADDRESS} =?"
+        val smsArgs = arrayOf(senderId)
+//execute query
+        val smsInboxCursor = contentResolver.query(
+            Uri.parse("content://sms/inbox"),
+            smsColumns,
+            smsSelection,
+            smsArgs,
+            null
+        )
 
-        val contentResolver = getContentResolver()
-        val smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null)
         val indexBody = smsInboxCursor?.getColumnIndex("body")
-        val indexAddress = smsInboxCursor?.getColumnIndex("address")
+//loop through results and add to list adapter
 
-        if (indexBody!! < 0 || !smsInboxCursor?.moveToFirst()) return
+        if (!smsInboxCursor!!.moveToFirst()) return
         arrayAdapter.clear()
+
         do {
-            val str= "SMS From : ${smsInboxCursor.getString(indexAddress!!)} ${smsInboxCursor.getString(indexBody)}"
-            arrayAdapter.add(str)
-        }while (smsInboxCursor.moveToNext())
+            arrayAdapter.add(smsInboxCursor.getString(indexBody!!))
+
+        } while (smsInboxCursor.moveToNext())
     }
 
     fun updateList(smsMessage: String) {
@@ -98,9 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     companion object {
-       lateinit var mainActivityInstance : MainActivity
+        lateinit var mainActivityInstance: MainActivity
     }
 }
