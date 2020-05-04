@@ -4,7 +4,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Telephony
-import android.telephony.SmsMessage
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -31,10 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         requestSmsPermission()
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
 
     }
 
@@ -101,7 +96,9 @@ class MainActivity : AppCompatActivity() {
         arrayAdapter.clear()
 
         do {
-            arrayAdapter.add(smsInboxCursor.getString(indexBody!!))
+            val smsMpesaSuccess = filterMpesaSuccessSms(smsInboxCursor.getString(indexBody!!))
+            if (smsMpesaSuccess.isNotBlank())
+                arrayAdapter.add(smsMpesaSuccess)
 
         } while (smsInboxCursor.moveToNext())
     }
@@ -109,6 +106,17 @@ class MainActivity : AppCompatActivity() {
     fun updateList(smsMessage: String) {
         arrayAdapter.insert(smsMessage, 0)
         arrayAdapter.notifyDataSetChanged()
+    }
+
+    fun filterMpesaSuccessSms(smsBody: String): String {
+//        each successfull transaction has 'Confirmed' keyword before the first fullstop `.`
+        val smsFirstLineSubstring = smsBody.split(".").first()
+        var smsMpesaSuccess  = ""
+
+        if (smsFirstLineSubstring.contains("Confirmed"))
+                smsMpesaSuccess = smsBody
+
+        return smsMpesaSuccess
     }
 
 
